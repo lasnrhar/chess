@@ -8,14 +8,21 @@
     ></script>
     <script type="text/javascript" src="chess.js"></script>
     <script type="text/javascript" src="increase.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style.css" />
     <link rel="icon" type="image/x-icon" href="ico.jpg" />
   </head>
   <body>
     <div class="container">
-      <canvas id="chessboard" width="520" height="520"></canvas>
-      <div class="panel">
-        <span id="p-chessPoint">chess point:<span id="chessPoint"></span></span>
+      <div class="board-panel">
+        <canvas id="chessboard" width="520" height="520"></canvas>
+        <button onclick="game.resetGomoku()">reset</button>
+        <button onclick="game.cheat()">cheat</button>
+      </div>
+      <div class="control-panel" id="p-control">
+        <span id="p-chesspoint"
+          >chess point:<span id="v-chesspoint"></span
+        ></span>
+        <div id="p-update"></div>
       </div>
     </div>
   </body>

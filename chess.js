@@ -67,14 +67,20 @@ let Gomoku = class {
         e.stopPropagation();
 
         let piece = this.findPiece(e.offsetX, e.offsetY);
-        if (piece && piece.val == 0) {
-            this.drawPiece(piece);
-            piece.val = this.black ? 1 : -1;
-            this.black = !this.black;
-        }
-        this.checkWin(piece);
+        this.playPiece(piece);
+    }
 
-        this.aiPlay(piece);
+    playPiece(piece) {
+        if (piece && piece.val == 0) {
+            piece.val = 1;
+            this.drawPiece(piece);
+
+            this.checkWin(piece);
+            if (!this.increase.win()) {
+                this.aiPlay(piece);
+            }
+
+        }
     }
 
     findPiece(x, y) {
@@ -97,11 +103,11 @@ let Gomoku = class {
         let position = piece.position;
         let x = position.x;
         let y = position.y;
-        this.ctx.fillStyle = this.black ? "#000000" : "#FFFFFF";
+        this.ctx.fillStyle = piece.val == 1 ? "#000000" : "#FFFFFF";
         this.ctx.beginPath();
         this.ctx.arc(x * this.size + 10, y * this.size + 10, 6, 0, 2 * Math.PI);
         this.ctx.fill();
-        this.ctx.strokeStyle = this.black ? "#FFFFFF" : "#000000";
+        this.ctx.strokeStyle = piece.val == 1 ? "#FFFFFF" : "#000000";
         this.ctx.beginPath();
         this.ctx.arc(x * this.size + 10, y * this.size + 10, 5, 0, 2 * Math.PI);
         this.ctx.stroke();
@@ -110,10 +116,11 @@ let Gomoku = class {
     checkWin(piece) {
         if (this.over) { return; }
         if (!piece) { return; }
-        let count = 1;
         let val = piece.val;
         let x = piece.position.x;
         let y = piece.position.y;
+
+        let count = 1;
         // up and down
         for (let i = 1; i < 5; i++) {
             if (y - i < 0) {
@@ -126,7 +133,7 @@ let Gomoku = class {
             }
         }
         for (let i = 1; i < 5; i++) {
-            if (y + i >= 13) {
+            if (y + i > 15) {
                 break;
             }
             if (this.pieces[x][y + i].val == val) {
@@ -155,7 +162,7 @@ let Gomoku = class {
             }
         }
         for (let i = 1; i < 5; i++) {
-            if (x + i >= 13) {
+            if (x + i > 15) {
                 break;
             }
             if (this.pieces[x + i][y].val == val) {
@@ -183,7 +190,7 @@ let Gomoku = class {
             }
         }
         for (let i = 1; i < 5; i++) {
-            if (x + i >= 13 || y + i >= 13) {
+            if (x + i > 15 || y + i > 15) {
                 break;
             }
             if (this.pieces[x + i][y + i].val == val) {
@@ -201,7 +208,7 @@ let Gomoku = class {
         // left down and right up
         count = 1;
         for (let i = 1; i < 5; i++) {
-            if (x - i < 0 || y + i >= 13) {
+            if (x - i < 0 || y + i > 15) {
                 break;
             }
             if (this.pieces[x - i][y + i].val == val) {
@@ -211,7 +218,7 @@ let Gomoku = class {
             }
         }
         for (let i = 1; i < 5; i++) {
-            if (x + i >= 13 || y - i < 0) {
+            if (x + i > 15 || y - i < 0) {
                 break;
             }
             if (this.pieces[x + i][y - i].val == val) {
@@ -232,8 +239,7 @@ let Gomoku = class {
 
         let whitePiece = this.findClosestEmptyPiece(piece.position.x, piece.position.y);
         this.drawPiece(whitePiece);
-        whitePiece.val = this.black ? 1 : -1;
-        this.black = !this.black;
+        whitePiece.val = -1;
         this.checkWin(whitePiece);
     }
 
@@ -256,6 +262,28 @@ let Gomoku = class {
 
     getRandomBool() {
         return Math.random() >= 0.3;
+    }
+
+    getRandomPiece(val) {
+        let emptyPieces = [];
+        for (const line of this.pieces) {
+            for (const piece of line) {
+                if (piece.val == val) {
+                    emptyPieces.push(piece);
+                }
+            }
+        }
+        if (emptyPieces.length == 0) {
+            return this.getRandomPiece(0);
+        }
+        return emptyPieces[Math.floor(Math.random() * emptyPieces.length)];
+    }
+
+    autoPlay() {
+        let piece = this.getRandomPiece(1);
+        let nextPiece = this.findClosestEmptyPiece(piece.position.x, piece.position.y);
+        this.playPiece(nextPiece);
+        this.increase.win();
     }
 
     init(increase) {
@@ -282,7 +310,6 @@ let Gomoku = class {
         });
         $(this.chess).click(function (e) {
             that.play(e);
-            that.increase.win();
         });
     }
 
@@ -295,9 +322,7 @@ let Gomoku = class {
         this.over = false;
         this.black = true;
         this.winner = 0;
-        this.ctx.clearRect(0, 0, 510, 510);
-        setTimeout(() => {
-            this.drawChessboard(500, 500);
-        }, 100);
+        this.ctx.clearRect(0, 0, 520, 520);
+        this.drawChessboard(500, 500);
     }
 }
