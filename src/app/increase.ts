@@ -20,14 +20,17 @@ export class Increase {
 
   initGame() {
     this.data = new GameData();
-    this.data.upgrades.push({ key: 'autoplay', value: new Upgrade(0, 10, 5) });
+    this.data.upgrades.push({
+      key: 'autoplay',
+      value: new Upgrade('Auto play', 0, 10, 5),
+    });
     this.data.upgrades.push({
       key: 'wincount',
-      value: new Upgrade(0, 3, 1000),
+      value: new Upgrade('The number of pieces required to win', 0, 3, 1000),
     });
     this.data.upgrades.push({
       key: 'pointgain',
-      value: new Upgrade(0, 100, 10),
+      value: new Upgrade('The score obtained from winning', 0, 100, 10),
     });
   }
 
@@ -131,7 +134,7 @@ class GameData {
     if (upgrade) {
       return upgrade.value;
     }
-    return new Upgrade(0, 0, 0);
+    return new Upgrade('', 0, 0, 0);
   }
 }
 
@@ -139,7 +142,9 @@ export class Upgrade {
   level = 0;
   max = 10;
   cost = 5;
-  constructor(level: number, max: number, cost: number) {
+  title = '';
+  constructor(title: string, level: number, max: number, cost: number) {
+    this.title = title;
     this.level = level;
     this.max = max;
     this.cost = cost;

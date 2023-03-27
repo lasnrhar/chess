@@ -17,7 +17,7 @@
     <div *ngIf="game.data.totalPoint > 0">
       <div *ngFor="let upgrade of game.data.upgrades" class="update-panel">
         <span
-          >{{ upgrade.key }}(<span
+          >{{ upgrade.value.title }} (<span
             >{{ upgrade.value.level }}/ {{ upgrade.value.max }}</span
           >)</span
         >
