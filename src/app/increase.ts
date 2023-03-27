@@ -169,7 +169,7 @@ export class Upgrade {
       case 'wincount':
         return upgrade.level > 3 ? 2 : 5 - upgrade.level;
       case 'pointgain':
-        return upgrade.level * 10;
+        return upgrade.level == 0 ? 1 : upgrade.level * 10;
     }
     return 0;
   }
