@@ -1,5 +1,5 @@
 import { ElementRef } from '@angular/core';
-import { Increase } from './increase';
+import { Increase, Upgrade } from './increase';
 
 export class Gomoku {
   chess: HTMLCanvasElement;
@@ -184,9 +184,11 @@ export class Gomoku {
     let x = piece.position.x;
     let y = piece.position.y;
 
+    let winUpgrade = this.increase.data.findUpgradeByKey('wincount');
+    let winCount = Upgrade.getUpgradeValue('wincount', winUpgrade);
     let count = 1;
     // up and down
-    for (let i = 1; i < 5; i++) {
+    for (let i = 1; i < winCount; i++) {
       if (y - i < 0) {
         break;
       }
@@ -196,7 +198,7 @@ export class Gomoku {
         break;
       }
     }
-    for (let i = 1; i < 5; i++) {
+    for (let i = 1; i < winCount; i++) {
       if (y + i > 15) {
         break;
       }
@@ -207,7 +209,7 @@ export class Gomoku {
       }
     }
 
-    if (count >= 5) {
+    if (count >= winCount) {
       this.over = true;
       this.winner = val;
       return;
@@ -215,7 +217,7 @@ export class Gomoku {
 
     count = 1;
     // left and right
-    for (let i = 1; i < 5; i++) {
+    for (let i = 1; i < winCount; i++) {
       if (x - i < 0) {
         break;
       }
@@ -225,7 +227,7 @@ export class Gomoku {
         break;
       }
     }
-    for (let i = 1; i < 5; i++) {
+    for (let i = 1; i < winCount; i++) {
       if (x + i > 15) {
         break;
       }
@@ -235,7 +237,7 @@ export class Gomoku {
         break;
       }
     }
-    if (count >= 5) {
+    if (count >= winCount) {
       this.over = true;
       this.winner = val;
       return;
@@ -243,7 +245,7 @@ export class Gomoku {
 
     // left up and right down
     count = 1;
-    for (let i = 1; i < 5; i++) {
+    for (let i = 1; i < winCount; i++) {
       if (x - i < 0 || y - i < 0) {
         break;
       }
@@ -253,7 +255,7 @@ export class Gomoku {
         break;
       }
     }
-    for (let i = 1; i < 5; i++) {
+    for (let i = 1; i < winCount; i++) {
       if (x + i > 15 || y + i > 15) {
         break;
       }
@@ -263,7 +265,7 @@ export class Gomoku {
         break;
       }
     }
-    if (count >= 5) {
+    if (count >= winCount) {
       this.over = true;
       this.winner = val;
       return;
@@ -271,7 +273,7 @@ export class Gomoku {
 
     // left down and right up
     count = 1;
-    for (let i = 1; i < 5; i++) {
+    for (let i = 1; i < winCount; i++) {
       if (x - i < 0 || y + i > 15) {
         break;
       }
@@ -281,7 +283,7 @@ export class Gomoku {
         break;
       }
     }
-    for (let i = 1; i < 5; i++) {
+    for (let i = 1; i < winCount; i++) {
       if (x + i > 15 || y - i < 0) {
         break;
       }
@@ -291,7 +293,7 @@ export class Gomoku {
         break;
       }
     }
-    if (count >= 5) {
+    if (count >= winCount) {
       this.over = true;
       this.winner = val;
       return;

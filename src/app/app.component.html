@@ -13,17 +13,19 @@
     <button (click)="game.clear()">clear</button>
   </div>
   <div class="control-panel" *ngIf="!loading">
-    <span>chess point:{{ game.data.point }}</span>
+    <span>chess point:{{ valToDisplayVal(game.data.point) }}</span>
     <div *ngIf="game.data.totalPoint > 0">
       <div *ngFor="let upgrade of game.data.upgrades" class="update-panel">
         <span
           >{{ upgrade.key }}(<span
-            >{{ upgrade.value.level }}/
-            {{ upgrade.value.max }}</span
+            >{{ upgrade.value.level }}/ {{ upgrade.value.max }}</span
           >)</span
         >
-        <button (click)="game.upgrade(upgrade.key)">
-          update({{ upgrade.value.cost }})
+        <button
+          (click)="game.upgrade(upgrade.key)"
+          [disabled]="!game.usable(upgrade.key)"
+        >
+          update({{ valToDisplayVal(upgrade.value.cost) }})
         </button>
       </div>
     </div>

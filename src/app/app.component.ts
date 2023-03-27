@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { Increase } from './increase';
 
 @Component({
@@ -18,5 +23,19 @@ export class AppComponent {
     this.game.init();
     this.loading = false;
     this.cdRef.detectChanges();
+  }
+
+  valToDisplayVal(val): string {
+    const units = ['k', 'M', 'G', 'T', 'P'];
+    let i = 0;
+    while (val >= 1000 && i < units.length) {
+      val /= 1000;
+      i++;
+    }
+    if (i === 0) {
+      return val.toString();
+    } else {
+      return val.toFixed(2) + units[i - 1];
+    }
   }
 }
