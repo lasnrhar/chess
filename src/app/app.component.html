@@ -10,6 +10,7 @@
     ></canvas>
     <button (click)="game.resetGomoku()">reset</button>
     <button (click)="game.cheat()">cheat</button>
+    <button (click)="game.clear()">clear</button>
   </div>
   <div class="control-panel" *ngIf="!loading">
     <span>chess point:{{ game.data.point }}</span>
@@ -21,7 +22,7 @@
             {{ upgrade.value.max }}</span
           >)</span
         >
-        <button (click)="game.update(upgrade.key)">
+        <button (click)="game.upgrade(upgrade.key)">
           update({{ upgrade.value.cost }})
         </button>
       </div>

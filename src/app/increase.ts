@@ -13,10 +13,13 @@ export class Increase {
 
   init() {
     this.gomoku.init();
-    this.initUpgrades();
+    this.initGame();
+    this.load();
+    this.startAuto();
   }
 
-  initUpgrades() {
+  initGame() {
+    this.data = new GameData();
     this.data.upgrades.push({ key: 'autoplay', value: new Upgrade(0, 10, 5) });
   }
 
@@ -40,7 +43,7 @@ export class Increase {
     this.gomoku.reset();
   }
 
-  update(item: string) {
+  upgrade(item: string) {
     if (this.data.point >= this.data.findUpgradeByKey(item).cost) {
       this.data.findUpgradeByKey(item).level += 1;
       this.data.point -= this.data.findUpgradeByKey(item).cost;
@@ -54,13 +57,41 @@ export class Increase {
     this.data.totalPoint += 1000;
   }
 
+  clear() {
+    this.initGame();
+    this.save();
+    this.stopAuto();
+    this.resetGomoku();
+  }
+
   startAuto() {
     this.subscribe.unsubscribe();
+    if (this.data.findUpgradeByKey('autoplay').level > 0) {
+      let time = 1000 / this.data.findUpgradeByKey('autoplay').level;
+      this.subscribe = interval(time).subscribe((v: any) => {
+        this.gomoku.autoPlay();
+        this.save();
+      });
+    }
+  }
 
-    let time = 1000 / (this.data.findUpgradeByKey('autoplay').level + 1);
-    this.subscribe = interval(time).subscribe((v: any) => {
-      this.gomoku.autoPlay();
-    });
+  stopAuto() {
+    this.subscribe.unsubscribe();
+  }
+
+  save() {
+    let str = JSON.stringify(this.data);
+    localStorage.setItem('game', btoa(unescape(encodeURIComponent(str))));
+  }
+
+  load() {
+    let str = localStorage.getItem('game');
+    if (str) {
+      let save = JSON.parse(decodeURIComponent(escape(atob(str))));
+      this.data.totalPoint = save.totalPoint;
+      this.data.point = save.point;
+      this.data.upgrades = save.upgrades;
+    }
   }
 }
 

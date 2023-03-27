@@ -18,7 +18,5 @@ export class AppComponent {
     this.game.init();
     this.loading = false;
     this.cdRef.detectChanges();
-
-    console.log(this.game.data.upgrades);
   }
 }
