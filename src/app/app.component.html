@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="board-panel">
+    <canvas
+      #chessboard
+      id="chessboard"
+      width="520"
+      height="520"
+      (mousemove)="game.gomoku.handleMouseMove($event)"
+      (click)="game.gomoku.play($event)"
+    ></canvas>
+    <button (click)="game.resetGomoku()">reset</button>
+    <button (click)="game.cheat()">cheat</button>
+  </div>
+  <div class="control-panel" *ngIf="!loading">
+    <span>chess point:{{ game.data.point }}</span>
+    <div *ngIf="game.data.totalPoint > 0">
+      <div *ngFor="let upgrade of game.data.upgrades" class="update-panel">
+        <span
+          >{{ upgrade.key }}(<span
+            >{{ upgrade.value.level }}/
+            {{ upgrade.value.max }}</span
+          >)</span
+        >
+        <button (click)="game.update(upgrade.key)">
+          update({{ upgrade.value.cost }})
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
