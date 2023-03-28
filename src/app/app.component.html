@@ -19,7 +19,7 @@
         <span
           >{{ upgrade.value.title }} (<span
             >{{ upgrade.value.level }}/ {{ upgrade.value.max }}</span
-          >)</span
+          >) <span *ngIf="debug">{{ getUpgradeValue(upgrade.key) }}</span></span
         >
         <button
           (click)="game.upgrade(upgrade.key)"

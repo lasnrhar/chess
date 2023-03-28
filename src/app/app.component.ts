@@ -4,7 +4,7 @@ import {
   ElementRef,
   ViewChild,
 } from '@angular/core';
-import { Increase } from './increase';
+import { Increase, Upgrade } from './increase';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +15,7 @@ export class AppComponent {
   @ViewChild('chessboard') chessboard!: ElementRef;
   game: Increase;
   loading = true;
+  debug = true;
 
   constructor(private cdRef: ChangeDetectorRef) {}
 
@@ -37,5 +38,9 @@ export class AppComponent {
     } else {
       return val.toFixed(2) + units[i - 1];
     }
+  }
+
+  getUpgradeValue(key): number {
+    return Upgrade.getUpgradeValue(key, this.game.data.findUpgradeByKey(key));
   }
 }

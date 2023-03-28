@@ -22,7 +22,7 @@ export class Increase {
     this.data = new GameData();
     this.data.upgrades.push({
       key: 'autoplay',
-      value: new Upgrade('Auto play', 0, 10, 5),
+      value: new Upgrade('Auto play', 0, 50, 5),
     });
     this.data.upgrades.push({
       key: 'wincount',
@@ -70,8 +70,8 @@ export class Increase {
   }
 
   cheat() {
-    this.data.point += 1000 * 1000 * 1000 * 1000;
-    this.data.totalPoint += 1000 * 1000 * 1000 * 1000;
+    this.data.point += 1000;
+    this.data.totalPoint += 1000;
   }
 
   clear() {
@@ -153,11 +153,11 @@ export class Upgrade {
   static getUpgradeCost(key: string, upgrade: Upgrade): number {
     switch (key) {
       case 'autoplay':
-        return upgrade.cost * 10 * upgrade.level;
+        return Math.pow(upgrade.level, 3) * 3 + 10;
       case 'wincount':
-        return upgrade.cost * 10 * upgrade.level;
+        return Math.pow(1000, upgrade.level + 1);
       case 'pointgain':
-        return upgrade.cost * 10;
+        return Math.pow(upgrade.level, 3) * 3 + 10;
     }
     return 5;
   }
@@ -169,7 +169,7 @@ export class Upgrade {
       case 'wincount':
         return upgrade.level > 3 ? 2 : 5 - upgrade.level;
       case 'pointgain':
-        return upgrade.level == 0 ? 1 : upgrade.level * 10;
+        return Math.pow(upgrade.level, 3) * 3 + 1;
     }
     return 0;
   }
