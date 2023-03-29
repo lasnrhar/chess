@@ -56,35 +56,35 @@ export class Increase {
     this.gomoku.reset();
   }
 
-  build(key: string, times: number = 1) {
+  buildOnce(key: string) {
     if (!this.usable('building', key)) {
       return false;
     }
     let building = this.data.findBuildingByKey(key);
-    this.data.wealth -= building.cost * times;
-    building.count += times;
-    building.historyCount += times;
+    this.data.wealth -= building.cost;
+    building.count += 1;
+    building.historyCount += 1;
 
     building.cost = Building.getBuildCost(key, building);
 
     if (building.consume.key != '') {
       let consume = this.data.findBuildingByKey(building.consume.key);
-      consume.count -= building.consume.value * times;
+      consume.count -= building.consume.value * 1;
     }
+    return true;
+  }
 
+  build(key: string) {
+    this.buildOnce(key);
     this.startAuto();
   }
 
   maxBuild(key: string) {
-    let building = this.data.findBuildingByKey(key);
-    let consume = this.data.findBuildingByKey(building.consume.key);
-    let count = Math.floor(this.data.wealth / building.cost);
-    if (building.consume.key != '') {
-      let consumeCount = Math.floor(consume.count / building.consume.value);
-      this.build(key, count < consumeCount ? count : consumeCount);
-    } else {
-      this.build(key, count);
+    let res = true;
+    while (res) {
+      res = this.buildOnce(key);
     }
+    this.startAuto();
   }
 
   upgrade(key: string) {

@@ -65,13 +65,34 @@ export class Building {
         }
       ),
     });
+
+    buildings.push({
+      key: 'companyBigger',
+      value: new Building(
+        'bigger company',
+        "Optimizing the company's structure has increased efficiency.",
+        0,
+        5000,
+        10000,
+        {
+          key: 'company',
+          value: 5,
+        }
+      ),
+    });
     return buildings;
   }
 
   static getBuildCost(key: string, building: Building): number {
     switch (key) {
       case 'player':
-        return building.cost + building.cost * 0.01;
+        return building.cost + Math.min(building.cost * 0.01, 1000);
+      case 'group':
+        return building.cost + Math.min(building.cost * 0.01, 500);
+      case 'company':
+        return building.cost + Math.min(building.cost * 0.01, 1000);
+      case 'companyBigger':
+        return building.cost + Math.min(building.cost * 0.01, 5000);
       default:
         return building.cost * 1.3;
     }
