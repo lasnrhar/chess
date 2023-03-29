@@ -15,6 +15,7 @@
   <div class="control-panel" *ngIf="!loading">
     <span>wealth:{{ valToDisplayVal(game.data.wealth) }}</span>
     <div *ngIf="game.data.wealth > 0">
+      <hr/>
       <div *ngFor="let building of game.data.buildings">
         <div
           *ngIf="
@@ -47,7 +48,7 @@
           <span class="desciption">{{ building.value.description }}</span>
         </div>
       </div>
-
+      <hr/>
       <div *ngFor="let upgrade of game.data.upgrades">
         <div
           *ngIf="
