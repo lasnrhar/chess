@@ -1,6 +1,9 @@
 import { ElementRef } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
+import { Building } from './building';
 import { Gomoku } from './chess';
+import { GameData } from './game-data';
+import { Upgrade } from './upgrade';
 
 export class Increase {
   gomoku: Gomoku;
@@ -20,18 +23,8 @@ export class Increase {
 
   initGame() {
     this.data = new GameData();
-    this.data.upgrades.push({
-      key: 'autoplay',
-      value: new Upgrade('Auto play', 0, 50, 5),
-    });
-    this.data.upgrades.push({
-      key: 'wincount',
-      value: new Upgrade('The number of pieces required to win', 0, 3, 1000),
-    });
-    this.data.upgrades.push({
-      key: 'pointgain',
-      value: new Upgrade('The score obtained from winning', 0, 100, 10),
-    });
+    this.data.upgrades = Upgrade.init();
+    this.data.buildings = Building.init();
   }
 
   win(): boolean {
@@ -42,52 +35,92 @@ export class Increase {
       this.gomoku.reset();
       return false;
     } else if (this.gomoku.winner == 1) {
-      let pointUpgrade = this.data.findUpgradeByKey('pointgain');
-      let point = Upgrade.getUpgradeValue('pointgain', pointUpgrade);
-      this.data.point += point;
-      this.data.totalPoint += point;
+      let wealth = this.gainPerWin();
+      this.data.wealth += wealth;
+      this.data.totalWealth += wealth;
       this.gomoku.reset();
       return true;
     }
     return false;
   }
 
+  gainPerWin(): number {
+    let earn = 1;
+    this.data.buildings.forEach((b) => {
+      earn += b.value.count * b.value.earn;
+    });
+    return earn;
+  }
+
   resetGomoku() {
     this.gomoku.reset();
   }
 
+  build(key: string, times: number = 1) {
+    if (!this.usable('building', key)) {
+      return false;
+    }
+    let building = this.data.findBuildingByKey(key);
+    this.data.wealth -= building.cost * times;
+    building.count += times;
+    building.historyCount += times;
+
+    building.cost = Building.getBuildCost(key, building);
+
+    if (building.consume.key != '') {
+      let consume = this.data.findBuildingByKey(building.consume.key);
+      consume.count -= building.consume.value * times;
+    }
+
+    this.startAuto();
+  }
+
+  maxBuild(key: string) {
+    let building = this.data.findBuildingByKey(key);
+    let consume = this.data.findBuildingByKey(building.consume.key);
+    let count = Math.floor(this.data.wealth / building.cost);
+    if (building.consume.key != '') {
+      let consumeCount = Math.floor(consume.count / building.consume.value);
+      this.build(key, count < consumeCount ? count : consumeCount);
+    } else {
+      this.build(key, count);
+    }
+  }
+
   upgrade(key: string) {
-    if (!this.usable(key)) {
+    if (!this.usable('upgrade', key)) {
       return;
     }
     let upgrade = this.data.findUpgradeByKey(key);
+    this.data.wealth -= upgrade.cost;
     upgrade.level += 1;
-    this.data.point -= upgrade.cost;
 
     upgrade.cost = Upgrade.getUpgradeCost(key, upgrade);
 
     this.startAuto();
   }
 
-  cheat() {
-    this.data.point += 1000;
-    this.data.totalPoint += 1000;
-  }
-
-  clear() {
-    this.initGame();
-    this.save();
-    this.stopAuto();
-    this.resetGomoku();
-  }
-
-  usable(key): boolean {
-    let upgrade = this.data.findUpgradeByKey(key);
-    if (this.data.point < upgrade.cost) {
-      return false;
+  usable(type, key): boolean {
+    if (type == 'upgrade') {
+      let upgrade = this.data.findUpgradeByKey(key);
+      if (this.data.wealth < upgrade.cost) {
+        return false;
+      }
+      if (upgrade.level >= upgrade.max) {
+        return false;
+      }
     }
-    if (upgrade.level >= upgrade.max) {
-      return false;
+    if (type == 'building') {
+      let building = this.data.findBuildingByKey(key);
+      if (this.data.wealth < building.cost) {
+        return false;
+      }
+      if (building.consume.key != '') {
+        let consume = this.data.findBuildingByKey(building.consume.key);
+        if (consume.count < building.consume.value) {
+          return false;
+        }
+      }
     }
     return true;
   }
@@ -95,7 +128,7 @@ export class Increase {
   startAuto() {
     this.subscribe.unsubscribe();
     let upgrade = this.data.findUpgradeByKey('autoplay');
-    if (upgrade.level > 0) {
+    if (this.gainPerWin() > 1 || upgrade.level > 0) {
       let time = Upgrade.getUpgradeValue('autoplay', upgrade);
       this.subscribe = interval(time).subscribe((v: any) => {
         this.gomoku.autoPlay();
@@ -105,7 +138,9 @@ export class Increase {
   }
 
   stopAuto() {
-    this.subscribe.unsubscribe();
+    if (this.subscribe != null) {
+      this.subscribe.unsubscribe();
+    }
   }
 
   save() {
@@ -117,60 +152,23 @@ export class Increase {
     let str = localStorage.getItem('game');
     if (str) {
       let save = JSON.parse(decodeURIComponent(escape(atob(str))));
-      this.data.totalPoint = save.totalPoint;
-      this.data.point = save.point;
+      this.data.totalWealth = save.totalWealth;
+      this.data.wealth = save.wealth;
+      this.data.loop = save.loop;
       this.data.upgrades = save.upgrades;
+      this.data.buildings = save.buildings;
     }
   }
-}
 
-class GameData {
-  totalPoint = 0;
-  point = 0;
-  upgrades: { key: string; value: Upgrade }[] = [];
-
-  findUpgradeByKey(key: string): Upgrade {
-    let upgrade = this.upgrades.find((item) => item.key == key);
-    if (upgrade) {
-      return upgrade.value;
-    }
-    return new Upgrade('', 0, 0, 0);
-  }
-}
-
-export class Upgrade {
-  level = 0;
-  max = 10;
-  cost = 5;
-  title = '';
-  constructor(title: string, level: number, max: number, cost: number) {
-    this.title = title;
-    this.level = level;
-    this.max = max;
-    this.cost = cost;
+  cheat() {
+    this.data.wealth += 1000 * 1000 * 1000;
+    this.data.totalWealth += 1000 * 1000 * 1000;
   }
 
-  static getUpgradeCost(key: string, upgrade: Upgrade): number {
-    switch (key) {
-      case 'autoplay':
-        return Math.pow(upgrade.level, 3) * 3 + 10;
-      case 'wincount':
-        return Math.pow(1000, upgrade.level + 1);
-      case 'pointgain':
-        return Math.pow(upgrade.level, 3) * 3 + 10;
-    }
-    return 5;
-  }
-
-  static getUpgradeValue(key: string, upgrade: Upgrade): number {
-    switch (key) {
-      case 'autoplay':
-        return 1000 / upgrade.level;
-      case 'wincount':
-        return upgrade.level > 3 ? 2 : 5 - upgrade.level;
-      case 'pointgain':
-        return Math.pow(upgrade.level, 3) * 3 + 1;
-    }
-    return 0;
+  clear() {
+    this.initGame();
+    this.save();
+    this.stopAuto();
+    this.resetGomoku();
   }
 }

@@ -1,5 +1,6 @@
 import { ElementRef } from '@angular/core';
-import { Increase, Upgrade } from './increase';
+import { Increase } from './increase';
+import { Upgrade } from './upgrade';
 
 export class Gomoku {
   chess: HTMLCanvasElement;

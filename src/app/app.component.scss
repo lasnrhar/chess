@@ -25,10 +25,30 @@
   width: 100%;
 }
 
-.update-panel {
+.upgrade-panel {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
   width: 500px;
+}
+
+.building-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 500px;
+}
+
+.building-panel .desciption {
+  color: #888888;
+}
+
+.building-panel .build-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: end;
+  gap: 5px;
 }

@@ -13,20 +13,60 @@
     <button (click)="game.clear()">clear</button>
   </div>
   <div class="control-panel" *ngIf="!loading">
-    <span>chess point:{{ valToDisplayVal(game.data.point) }}</span>
-    <div *ngIf="game.data.totalPoint > 0">
-      <div *ngFor="let upgrade of game.data.upgrades" class="update-panel">
-        <span
-          >{{ upgrade.value.title }} (<span
-            >{{ upgrade.value.level }}/ {{ upgrade.value.max }}</span
-          >) <span *ngIf="debug">{{ getUpgradeValue(upgrade.key) }}</span></span
+    <span>wealth:{{ valToDisplayVal(game.data.wealth) }}</span>
+    <div *ngIf="game.data.wealth > 0">
+      <div *ngFor="let building of game.data.buildings">
+        <div
+          *ngIf="
+            game.data.wealth > building.value.cost || building.value.historyCount > 0
+          "
+          class="building-panel"
         >
-        <button
-          (click)="game.upgrade(upgrade.key)"
-          [disabled]="!game.usable(upgrade.key)"
+          <div class="upgrade-panel">
+            <span
+              >{{ building.value.title }} ({{ valToDisplayVal(building.value.count) }})
+            </span>
+            <div class="build-button">
+              <button
+                (click)="game.build(building.key)"
+                [disabled]="!game.usable('building', building.key)"
+              >
+                upgrade(${{
+                  valToDisplayVal(building.value.cost) +
+                    buildingConsume(building.key)
+                }})
+              </button>
+              <button
+                (click)="game.maxBuild(building.key)"
+                [disabled]="!game.usable('building', building.key)"
+              >
+                max
+              </button>
+            </div>
+          </div>
+          <span class="desciption">{{ building.value.description }}</span>
+        </div>
+      </div>
+
+      <div *ngFor="let upgrade of game.data.upgrades">
+        <div
+          *ngIf="
+            game.data.wealth > upgrade.value.cost || upgrade.value.level > 0
+          "
+          class="upgrade-panel"
         >
-          update({{ valToDisplayVal(upgrade.value.cost) }})
-        </button>
+          <span
+            >{{ upgrade.value.title }} ({{ upgrade.value.level }}/
+            {{ upgrade.value.max }})
+            <span *ngIf="debug">{{ getUpgradeValue(upgrade.key) }}</span></span
+          >
+          <button
+            (click)="game.upgrade(upgrade.key)"
+            [disabled]="!game.usable('upgrade', upgrade.key)"
+          >
+            upgrade({{ valToDisplayVal(upgrade.value.cost) }})
+          </button>
+        </div>
       </div>
     </div>
   </div>
