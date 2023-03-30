@@ -29,7 +29,7 @@ export class Building {
       key: 'player',
       value: new Building(
         'chess player',
-        'hire a chess player to play chess for you',
+        'Hire a chess player to play chess for you',
         0,
         5,
         5
@@ -40,7 +40,7 @@ export class Building {
       key: 'group',
       value: new Building(
         'player group',
-        'make your chess player a group, work more efficiently',
+        'Make your chess player a group, work more efficiently',
         0,
         50,
         100,
@@ -55,7 +55,7 @@ export class Building {
       key: 'company',
       value: new Building(
         'chess company',
-        'combining your group into a company makes it more efficient',
+        'Combining your group into a company makes it more efficient',
         0,
         500,
         1000,
@@ -70,7 +70,7 @@ export class Building {
       key: 'companyBigger',
       value: new Building(
         'bigger company',
-        "optimizing the company's structure has increased efficiency.",
+        "Optimizing the company's structure has increased efficiency.",
         0,
         5000,
         10000,
@@ -85,7 +85,7 @@ export class Building {
       key: 'companyListed',
       value: new Building(
         'listed company',
-        'integrating the company and going public, bring more player to play chess for you.',
+        'Integrating the company and going public, bring more player to play chess for you.',
         0,
         50000,
         100000,
@@ -100,7 +100,7 @@ export class Building {
       key: 'country',
       value: new Building(
         'small country',
-        'try to purchase a small country, have all the people in the country play chess for you.',
+        'Try to purchase a small country, have all the people in the country play chess for you.',
         0,
         50000,
         100000,
@@ -115,7 +115,7 @@ export class Building {
       key: 'countryBigger',
       value: new Building(
         'country',
-        'after annexing the surrounding countries, you have become a regional power.',
+        'After annexing the surrounding countries, you have become a regional power.',
         0,
         500000,
         1000000,
@@ -130,7 +130,7 @@ export class Building {
       key: 'continent',
       value: new Building(
         'continent',
-        'unifying a continent.',
+        'Unifying a continent.',
         0,
         5000000,
         10000000,
@@ -145,7 +145,7 @@ export class Building {
       key: 'earth',
       value: new Building(
         'Earth',
-        'now, people all over the world are playing chess for you.',
+        'Now, people all over the world are playing chess for you.',
         0,
         5000000,
         10000000,

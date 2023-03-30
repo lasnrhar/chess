@@ -1,5 +1,5 @@
-import { Building } from "./building";
-import { Upgrade } from "./upgrade";
+import { Building } from './building';
+import { Upgrade } from './upgrade';
 
 export class GameData {
   totalWealth = 0;
@@ -13,7 +13,7 @@ export class GameData {
     if (upgrade) {
       return upgrade.value;
     }
-    return new Upgrade('', 0, 0, 0);
+    return new Upgrade('', '', 0, 0, 0);
   }
 
   findBuildingByKey(key: string): Building {

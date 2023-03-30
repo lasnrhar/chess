@@ -15,17 +15,20 @@
   <div class="control-panel" *ngIf="!loading">
     <span>wealth:{{ valToDisplayVal(game.data.wealth) }}</span>
     <div *ngIf="game.data.wealth > 0">
-      <hr/>
+      <hr />
       <div *ngFor="let building of game.data.buildings">
         <div
           *ngIf="
-            game.data.wealth > building.value.cost || building.value.historyCount > 0
+            game.data.wealth > building.value.cost ||
+            building.value.historyCount > 0
           "
           class="building-panel"
         >
           <div class="upgrade-panel">
             <span
-              >{{ building.value.title }} ({{ valToDisplayVal(building.value.count) }})
+              >{{ building.value.title }} ({{
+                valToDisplayVal(building.value.count)
+              }})
             </span>
             <div class="build-button">
               <button
@@ -48,25 +51,30 @@
           <span class="desciption">{{ building.value.description }}</span>
         </div>
       </div>
-      <hr/>
+      <hr />
       <div *ngFor="let upgrade of game.data.upgrades">
         <div
           *ngIf="
             game.data.wealth > upgrade.value.cost || upgrade.value.level > 0
           "
-          class="upgrade-panel"
+          class="building-panel"
         >
-          <span
-            >{{ upgrade.value.title }} ({{ upgrade.value.level }}/
-            {{ upgrade.value.max }})
-            <span *ngIf="debug">{{ getUpgradeValue(upgrade.key) }}</span></span
-          >
-          <button
-            (click)="game.upgrade(upgrade.key)"
-            [disabled]="!game.usable('upgrade', upgrade.key)"
-          >
-            upgrade({{ valToDisplayVal(upgrade.value.cost) }})
-          </button>
+          <div class="upgrade-panel">
+            <span
+              >{{ upgrade.value.title }} ({{ upgrade.value.level }}/
+              {{ upgrade.value.max }})
+              <span *ngIf="debug">{{
+                getUpgradeValue(upgrade.key)
+              }}</span></span
+            >
+            <button
+              (click)="game.upgrade(upgrade.key)"
+              [disabled]="!game.usable('upgrade', upgrade.key)"
+            >
+              upgrade({{ valToDisplayVal(upgrade.value.cost) }})
+            </button>
+          </div>
+          <span class="desciption">{{ upgrade.value.description }}</span>
         </div>
       </div>
     </div>
