@@ -23,4 +23,12 @@ export class GameData {
     }
     return new Building('', '', 0, 0, 0);
   }
+
+  earnPerWin(): number {
+    let earn = 1;
+    this.buildings.forEach((b) => {
+      earn += b.value.count * b.value.earn;
+    });
+    return earn;
+  }
 }

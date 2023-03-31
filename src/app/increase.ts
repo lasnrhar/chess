@@ -8,7 +8,10 @@ import { Upgrade } from './upgrade';
 export class Increase {
   gomoku: Gomoku;
   data: GameData = new GameData();
-  subscribe: Subscription = new Subscription();
+  auto: Subscription = new Subscription();
+  statistics: Subscription = new Subscription();
+  earnPerSecond = 0;
+  earnInStatistics = 0;
 
   constructor(element: ElementRef<HTMLCanvasElement>) {
     this.gomoku = new Gomoku(element, this);
@@ -19,6 +22,7 @@ export class Increase {
     this.initGame();
     this.load();
     this.startAuto();
+    this.startStatistics();
   }
 
   initGame() {
@@ -35,21 +39,14 @@ export class Increase {
       this.gomoku.reset();
       return false;
     } else if (this.gomoku.winner == 1) {
-      let wealth = this.gainPerWin();
+      let wealth = this.data.earnPerWin();
+      this.earnInStatistics += wealth;
       this.data.wealth += wealth;
       this.data.totalWealth += wealth;
       this.gomoku.reset();
       return true;
     }
     return false;
-  }
-
-  gainPerWin(): number {
-    let earn = 1;
-    this.data.buildings.forEach((b) => {
-      earn += b.value.count * b.value.earn;
-    });
-    return earn;
   }
 
   resetGomoku() {
@@ -126,11 +123,11 @@ export class Increase {
   }
 
   startAuto() {
-    this.subscribe.unsubscribe();
+    this.auto.unsubscribe();
     let upgrade = this.data.findUpgradeByKey('autoplay');
-    if (this.gainPerWin() > 1 || upgrade.level > 0) {
+    if (this.data.earnPerWin() > 1 || upgrade.level > 0) {
       let time = Upgrade.getUpgradeValue('autoplay', upgrade);
-      this.subscribe = interval(time).subscribe((v: any) => {
+      this.auto = interval(time).subscribe((v: any) => {
         this.gomoku.autoPlay();
         this.save();
       });
@@ -138,9 +135,17 @@ export class Increase {
   }
 
   stopAuto() {
-    if (this.subscribe != null) {
-      this.subscribe.unsubscribe();
+    if (this.auto != null) {
+      this.auto.unsubscribe();
     }
+  }
+
+  startStatistics() {
+    this.statistics.unsubscribe();
+    this.statistics = interval(1000).subscribe(() => {
+      this.earnPerSecond = this.earnInStatistics;
+      this.earnInStatistics = 0;
+    });
   }
 
   save() {

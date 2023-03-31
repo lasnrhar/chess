@@ -6,20 +6,21 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./wealth.component.scss'],
 })
 export class WealthComponent {
-  @Input() value = 0;
-  wealth = 0;
+  @Input() wealth = 0;
+  @Input() earn = 0;
+  wealthDisplay = 0;
   lastValue = 0;
 
   ngOnChanges() {
     let idx = 1;
-    let difference = this.value - this.lastValue;
+    let difference = this.wealth - this.lastValue;
     let interval = setInterval(() => {
       if (idx != 10) {
         idx++;
-        this.wealth = this.lastValue + idx * (difference / 10);
+        this.wealthDisplay = this.lastValue + idx * (difference / 10);
       } else {
         clearInterval(interval);
-        this.lastValue = this.value;
+        this.lastValue = this.wealth;
       }
     }, 2);
   }
