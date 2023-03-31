@@ -13,7 +13,7 @@
     <button (click)="game.clear()">clear</button>
   </div>
   <div class="control-panel" *ngIf="!loading">
-    <span>wealth:{{ valToDisplayVal(game.data.wealth) }}</span>
+    <app-wealth [value]="game.data.wealth"></app-wealth>
     <div *ngIf="game.data.wealth > 0">
       <hr />
       <div *ngFor="let building of game.data.buildings">
